@@ -7,8 +7,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties(prefix = "handler")
-public class WheelHandlerSettings {
+public class HandlerSettings {
     private String webSite;
-    private Integer timeout;
-    private Integer ticksToUpdate;
+    private Integer pointCount;
 }

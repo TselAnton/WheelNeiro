@@ -1,6 +1,6 @@
 package com.tsel.neiro;
 
-import com.tsel.neiro.handler.WheelHandler;
+import com.tsel.neiro.handler.ColorHandler;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,7 +14,18 @@ public class WheelNeiroApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(WheelNeiroApplication.class, args);
-        WheelHandler handler = context.getBean(WheelHandler.class);
-        handler.run();
+        ColorHandler handler = context.getBean(ColorHandler.class);
+
+        handler.handle();
+        handler.handle();
+        handler.handle();
+        handler.handle();
+        handler.handle();
+        handler.handle();
+        handler.handle();
+        handler.handle();
+        handler.handle();
+        handler.handle();
+        handler.handle();
     }
 }
