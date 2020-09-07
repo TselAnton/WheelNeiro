@@ -1,16 +1,15 @@
 package com.tsel.neiro.handler;
 
-import com.tsel.neiro.data.WheelColor;
-import com.tsel.neiro.repository.WheelResultRepository;
+import static com.tsel.neiro.utils.HandlerUtils.getColorName;
+import static org.apache.logging.log4j.util.Strings.isBlank;
+
+import com.tsel.neiro.repository.ResultRepository;
+import java.util.concurrent.TimeUnit;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.TimeUnit;
-
-import static org.apache.logging.log4j.util.Strings.isBlank;
 
 @Log4j2
 @Component
@@ -20,14 +19,14 @@ public class ColorHandler extends Thread {
     private static final Integer BLOCK_OF_COLOR = 350;
     private static final Integer PAST_BLOCK = 34;
 
-    private final WheelResultRepository repository;
+    private final ResultRepository repository;
     private final HandlerSettings settings;
     private final HandlerConnector handlerConnector;
 
     private String html;
     private boolean isInterrupt;
 
-    public ColorHandler(@Autowired HandlerSettings settings, @Autowired WheelResultRepository repository,
+    public ColorHandler(@Autowired HandlerSettings settings, @Autowired ResultRepository repository,
                         @Autowired HandlerConnector handlerConnector) {
         this.settings = settings;
         this.repository = repository;
@@ -45,7 +44,7 @@ public class ColorHandler extends Thread {
             if (newColor == null) {
                 log.warn("Can't handle last color");
             } else {
-                log.info("Current color: {}", WheelColor.getColor(newColor));
+                log.info("Current color: {}", getColorName(newColor));
                 //TODO: Добавить добавление в БД, либо подумать над тем, чтобы отправлять евент во все возможные сервисы
             }
 

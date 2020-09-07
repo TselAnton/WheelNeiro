@@ -1,6 +1,7 @@
 package com.tsel.neiro.handler;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import javax.annotation.PreDestroy;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
@@ -8,8 +9,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PreDestroy;
 
 @Component
 @Scope("singleton")
