@@ -5,6 +5,7 @@ import com.tsel.neiro.repository.WheelResultRepository;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -13,49 +14,59 @@ import static org.apache.logging.log4j.util.Strings.isBlank;
 
 @Log4j2
 @Component
-public class ColorHandler {
+@Scope("singleton")
+public class ColorHandler extends Thread {
 
     private static final Integer BLOCK_OF_COLOR = 350;
     private static final Integer PAST_BLOCK = 34;
 
     private final WheelResultRepository repository;
     private final HandlerSettings settings;
-    private final Connector connector;
+    private final HandlerConnector handlerConnector;
 
     private String html;
+    private boolean isInterrupt;
 
     public ColorHandler(@Autowired HandlerSettings settings, @Autowired WheelResultRepository repository,
-                        @Autowired Connector connector) {
+                        @Autowired HandlerConnector handlerConnector) {
         this.settings = settings;
         this.repository = repository;
-        this.connector = connector;
+        this.handlerConnector = handlerConnector;
     }
 
-    //TODO: Подумать над тем, чтобы запихнуть сюда Thread, либо сделать отдельный Runner для запуска/остановки работы хендлера
-
+    @Override
     @SneakyThrows
-    public void handle() {
-        this.html = updateHtml();
+    public void run() {
+        isInterrupt = false;
+        while (!isInterrupt) {
+            this.html = updateHtml();
 
-        Integer newColor = getCurrentColor();
-        if (newColor == null) {
-            log.warn("Can't handle last color");
-        } else {
-            log.info("Current color: {}", WheelColor.getColor(newColor));
-            //TODO: Добавить добавление в БД, либо подумать над тем, чтобы отправлять евент во все возможные сервисы
+            Integer newColor = getCurrentColor();
+            if (newColor == null) {
+                log.warn("Can't handle last color");
+            } else {
+                log.info("Current color: {}", WheelColor.getColor(newColor));
+                //TODO: Добавить добавление в БД, либо подумать над тем, чтобы отправлять евент во все возможные сервисы
+            }
+
+            handlerConnector.refreshPage();
+            TimeUnit.SECONDS.sleep(3);
         }
+    }
 
-        connector.refreshPage();
-        TimeUnit.SECONDS.sleep(3);
+    @Override
+    public void interrupt() {
+        this.isInterrupt = true;
+        super.interrupt();
     }
 
     private String updateHtml() throws InterruptedException {
         if (isBlank(html)) {
-            return getLastColorsHtml(connector.getHtml());
+            return getLastColorsHtml(handlerConnector.getHtml());
         } else {
-            String newHtml = getLastColorsHtml(connector.getHtml());
+            String newHtml = getLastColorsHtml(handlerConnector.getHtml());
             while (html.equals(newHtml)) {
-                newHtml = getLastColorsHtml(connector.getHtml());
+                newHtml = getLastColorsHtml(handlerConnector.getHtml());
                 TimeUnit.SECONDS.sleep(1);
             }
             return newHtml;

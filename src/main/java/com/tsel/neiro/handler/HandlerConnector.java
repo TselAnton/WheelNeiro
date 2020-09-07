@@ -6,16 +6,18 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
 
 @Component
-public class Connector {
+@Scope("singleton")
+public class HandlerConnector {
 
     private final WebDriver webDriver;
 
-    public Connector(@Autowired HandlerSettings settings) {
+    public HandlerConnector(@Autowired HandlerSettings settings) {
         WebDriverManager.chromedriver().setup();
         this.webDriver = new ChromeDriver();
         webDriver.manage().window().setSize(new Dimension(1, 1));

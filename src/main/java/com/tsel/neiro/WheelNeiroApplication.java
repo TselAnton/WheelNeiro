@@ -14,18 +14,9 @@ public class WheelNeiroApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(WheelNeiroApplication.class, args);
-        ColorHandler handler = context.getBean(ColorHandler.class);
 
-        handler.handle();
-        handler.handle();
-        handler.handle();
-        handler.handle();
-        handler.handle();
-        handler.handle();
-        handler.handle();
-        handler.handle();
-        handler.handle();
-        handler.handle();
-        handler.handle();
+        // Run handler
+        ColorHandler handler = context.getBean(ColorHandler.class);
+        handler.start();
     }
 }
