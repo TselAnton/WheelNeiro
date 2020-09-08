@@ -1,15 +1,15 @@
-package com.tsel.neiro.service;
+package com.tsel.neiro.utils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component
-@Scope("singleton")
-public class TimeService {
+public final class TimeUtils {
 
-    public long getCurrentTimeInMilSec() {
+    private TimeUtils() {}
+
+    public static long getCurrentTimeInMS() {
         return LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 }

@@ -1,0 +1,23 @@
+spring:
+  liquibase:
+    change-log: classpath:/db/changelog/changelog-master.yaml
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: qwerty
+  jpa:
+    database: POSTGRESQL
+    show-sql: false
+    properties.hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      jdbc.lob.non_contextual_creation: true
+      id.new_generator_mappings: true
+    hibernate.ddl-auto: none
+
+server:
+  port: 8080
+
+handler:
+  webSite: https://csgo500.io/
+  pointCount: 20

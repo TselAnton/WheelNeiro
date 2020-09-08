@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/changelog-master.yaml
+  - changeSet:
+      id: 1
+      author: anton_tsel
+      changes:
+        - createTable:
+            tableName: results
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: date
+                  type: BIGINT
+                  constraints:
+                    unique: false
+                    nullable: false
+              - column:
+                  name: value
+                  type: INTEGER
+                  constraints:
+                    unique: false
+                    nullable: false

@@ -3,6 +3,7 @@ package com.tsel.neiro.handler;
 import static com.tsel.neiro.utils.HandlerUtils.getColorName;
 import static org.apache.logging.log4j.util.Strings.isBlank;
 
+import com.tsel.neiro.data.Result;
 import com.tsel.neiro.repository.ResultRepository;
 import java.util.concurrent.TimeUnit;
 import lombok.SneakyThrows;
@@ -45,7 +46,7 @@ public class ColorHandler extends Thread {
                 log.warn("Can't handle last color");
             } else {
                 log.info("Current color: {}", getColorName(newColor));
-                //TODO: Добавить добавление в БД, либо подумать над тем, чтобы отправлять евент во все возможные сервисы
+                repository.save(new Result(newColor));
             }
 
             handlerConnector.refreshPage();
