@@ -1,6 +1,6 @@
 package com.tsel.neiro.data;
 
-import static com.tsel.neiro.utils.TimeUtils.getCurrentTimeInMS;
+import static com.tsel.neiro.utils.TimeUtils.getCurrentTimeInLong;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,7 +25,7 @@ public class Result {
     private Integer value;
 
     public Result(Integer value) {
-        this.date = getCurrentTimeInMS();
+        this.date = getCurrentTimeInLong();
         this.value = value;
     }
 }
