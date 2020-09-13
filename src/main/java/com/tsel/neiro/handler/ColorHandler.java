@@ -1,10 +1,16 @@
 package com.tsel.neiro.handler;
 
 import static com.tsel.neiro.utils.HandlerUtils.getColorName;
+import static java.util.Optional.ofNullable;
 import static org.apache.logging.log4j.util.Strings.isBlank;
 
 import com.tsel.neiro.data.Result;
+import com.tsel.neiro.exception.HandleColorException;
 import com.tsel.neiro.repository.ResultRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -17,7 +23,7 @@ import org.springframework.stereotype.Component;
 @Scope("singleton")
 public class ColorHandler extends Thread {
 
-    private static final Integer BLOCK_OF_COLOR = 350;
+    private static final Integer BLOCK_OF_COLOR = 450;
     private static final Integer PAST_BLOCK = 34;
 
     private final ResultRepository repository;
@@ -25,6 +31,7 @@ public class ColorHandler extends Thread {
     private final HandlerConnector handlerConnector;
 
     private String html;
+    private List<Integer> lastColors;
     private boolean isInterrupt;
 
     public ColorHandler(@Autowired HandlerSettings settings, @Autowired ResultRepository repository,
@@ -39,18 +46,25 @@ public class ColorHandler extends Thread {
     public void run() {
         isInterrupt = false;
         while (!isInterrupt) {
-            this.html = updateHtml();
+            try {
+                Optional<String> newHtml = updateHtml();
+                if (newHtml.isPresent()) {
+                    this.html = newHtml.get();
+                    Integer newColor = getCurrentColor();
 
-            Integer newColor = getCurrentColor();
-            if (newColor == null) {
-                log.warn("Can't handle last color");
-            } else {
-                log.info("Current color: {}", getColorName(newColor));
-                repository.save(new Result(newColor));
+                    if (newColor != null) {
+                        log.info("Current color: {}", getColorName(newColor));
+                        repository.save(new Result(newColor));
+                    }
+
+                    handlerConnector.refreshPage();
+                    TimeUnit.SECONDS.sleep(3);
+                }
+            } catch (HandleColorException e) {
+                log.debug("Exception while handle colors = ", e);
+            } catch (Exception e) {
+                log.debug("Some other exception: ", e);
             }
-
-            handlerConnector.refreshPage();
-            TimeUnit.SECONDS.sleep(3);
         }
     }
 
@@ -60,12 +74,12 @@ public class ColorHandler extends Thread {
         super.interrupt();
     }
 
-    private String updateHtml() throws InterruptedException {
+    private Optional<String> updateHtml() throws InterruptedException, HandleColorException {
         if (isBlank(html)) {
             return getLastColorsHtml(handlerConnector.getHtml());
         } else {
-            String newHtml = getLastColorsHtml(handlerConnector.getHtml());
-            while (html.equals(newHtml)) {
+            Optional<String> newHtml = getLastColorsHtml(handlerConnector.getHtml());
+            while (!newHtml.isPresent() || html.equals(newHtml.get()) ) {
                 newHtml = getLastColorsHtml(handlerConnector.getHtml());
                 TimeUnit.SECONDS.sleep(1);
             }
@@ -73,31 +87,60 @@ public class ColorHandler extends Thread {
         }
     }
 
-    private Integer getCurrentColor() {
-        try {
-            String parsedHtml = this.html;
-            return getColorFromHtmlBlock(parsedHtml);
-        } catch (Exception e) {
-            log.error(e);
+    private Integer getCurrentColor() throws HandleColorException {
+        String parsedHtml = html;
+        List<Integer> parsedColors = new ArrayList<>();
+        for (int i = 0; i < settings.getPointCount(); i++) {
+            getColorFromHtmlBlock(parsedHtml)
+                    .ifPresent(parsedColors::add);
+            parsedHtml = removeLastColorBlock(parsedHtml).orElse(null);
+        }
+        if (isNewColor(parsedColors)) {
+            lastColors = parsedColors;
+            return parsedColors.get(0);
         }
         return null;
     }
 
-    private Integer getColorFromHtmlBlock(String html) {
-        String number = html.substring(
-                html.lastIndexOf("<div class=\"past-color\"></div>") - PAST_BLOCK).substring(17, 18);
-        return Integer.parseInt(number);
+    private boolean isNewColor(List<Integer> parsedColors) {
+        if (lastColors == null || lastColors.isEmpty()) {
+            return true;
+        }
+        return !lastColors.equals(parsedColors) &&
+                lastColors.subList(0, lastColors.size() - 1).equals(parsedColors.subList(1, lastColors.size()));
     }
 
-    private String getLastColorsHtml(String html) {
+    private Optional<Integer> getColorFromHtmlBlock(String html) throws HandleColorException {
         try {
-            return html.substring(
-                    html.indexOf("<div id=\"past-queue-more\" style=\"display: none;\">") -
-                            (BLOCK_OF_COLOR * settings.getPointCount()),
-                    html.indexOf("<div id=\"past-queue-more\" style=\"display: none;\">"));
+            return ofNullable(html)
+                    .map(page -> page
+                            .substring(page.lastIndexOf("<div class=\"past-color\"></div>") - PAST_BLOCK)
+                            .substring(17, 18))
+                    .map(Integer::parseInt);
         } catch (Exception e) {
-            log.error("Html size = {}, {}", html.length(), e);
-            return null;
+            throw new HandleColorException(e);
+        }
+    }
+
+    private Optional<String> removeLastColorBlock(String html) throws HandleColorException {
+        try {
+            return ofNullable(html)
+                    .map(page -> page.substring(0,
+                            page.lastIndexOf("<div class=\"past-color\"></div>") - PAST_BLOCK));
+        } catch (Exception e) {
+            throw new HandleColorException(e);
+        }
+    }
+
+    private Optional<String> getLastColorsHtml(String html) throws HandleColorException {
+        try {
+            return ofNullable(html)
+                    .map(page -> page.substring(
+                            page.indexOf("<div id=\"past-queue-more\" style=\"display: none;\">") -
+                                (BLOCK_OF_COLOR * settings.getPointCount()),
+                            page.indexOf("<div id=\"past-queue-more\" style=\"display: none;\">")));
+        } catch (Exception e) {
+            throw new HandleColorException(e);
         }
     }
 }
