@@ -1,11 +1,12 @@
-package com.tsel.neiro.handler;
+package com.tsel.neiro.handler.connector;
 
+import com.tsel.neiro.handler.HandlerSettings;
 import com.tsel.neiro.handler.connector.Connector;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -15,14 +16,14 @@ import javax.annotation.PreDestroy;
 
 @Lazy
 @Scope("singleton")
-@Component("FireFoxConnector")
-public class FireFoxConnector implements Connector {
+@Component("ChromeConnector")
+public class ChromeConnector implements Connector {
 
     private final WebDriver webDriver;
 
-    public FireFoxConnector(@Autowired HandlerSettings settings) {
-        WebDriverManager.firefoxdriver().setup();
-        this.webDriver = new FirefoxDriver();
+    public ChromeConnector(@Autowired HandlerSettings settings) {
+        WebDriverManager.chromedriver().setup();
+        this.webDriver = new ChromeDriver();
         webDriver.manage().window().setSize(new Dimension(1, 1));
         webDriver.manage().window().setPosition(new Point(0, 0));
         webDriver.get(settings.getWebSite());
