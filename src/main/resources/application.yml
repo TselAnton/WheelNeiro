@@ -21,3 +21,4 @@ server:
 handler:
   webSite: https://csgo500.io/
   pointCount: 20
+  connectorName: firefox

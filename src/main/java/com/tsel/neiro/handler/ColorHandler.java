@@ -6,7 +6,6 @@ import static org.apache.logging.log4j.util.Strings.isBlank;
 
 import com.tsel.neiro.data.Result;
 import com.tsel.neiro.exception.HandleColorException;
-import com.tsel.neiro.handler.connector.Connector;
 import com.tsel.neiro.repository.ResultRepository;
 
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class ColorHandler extends Thread {
     private boolean isInterrupt;
 
     public ColorHandler(@Autowired HandlerSettings settings, @Autowired ResultRepository repository,
-                        @Qualifier("FireFoxConnector") Connector connector) {
+                        @Autowired Connector connector) {
         this.settings = settings;
         this.repository = repository;
         this.connector = connector;

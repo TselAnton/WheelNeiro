@@ -12,4 +12,5 @@ import org.springframework.stereotype.Component;
 public class HandlerSettings {
     private String webSite;
     private Integer pointCount;
+    private String connectorName;
 }
