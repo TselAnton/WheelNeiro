@@ -6,6 +6,7 @@ import static org.apache.logging.log4j.util.Strings.isBlank;
 
 import com.tsel.neiro.data.Result;
 import com.tsel.neiro.exception.HandleColorException;
+import com.tsel.neiro.handler.connector.Connector;
 import com.tsel.neiro.repository.ResultRepository;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -28,17 +30,17 @@ public class ColorHandler extends Thread {
 
     private final ResultRepository repository;
     private final HandlerSettings settings;
-    private final HandlerConnector handlerConnector;
+    private final Connector connector;
 
     private String html;
     private List<Integer> lastColors;
     private boolean isInterrupt;
 
     public ColorHandler(@Autowired HandlerSettings settings, @Autowired ResultRepository repository,
-                        @Autowired HandlerConnector handlerConnector) {
+                        @Qualifier("FireFoxConnector") Connector connector) {
         this.settings = settings;
         this.repository = repository;
-        this.handlerConnector = handlerConnector;
+        this.connector = connector;
     }
 
     @Override
@@ -57,7 +59,7 @@ public class ColorHandler extends Thread {
                         repository.save(new Result(newColor));
                     }
 
-                    handlerConnector.refreshPage();
+                    connector.refreshPage();
                     TimeUnit.SECONDS.sleep(3);
                 }
             } catch (HandleColorException e) {
@@ -76,11 +78,11 @@ public class ColorHandler extends Thread {
 
     private Optional<String> updateHtml() throws InterruptedException, HandleColorException {
         if (isBlank(html)) {
-            return getLastColorsHtml(handlerConnector.getHtml());
+            return getLastColorsHtml(connector.getHtml());
         } else {
-            Optional<String> newHtml = getLastColorsHtml(handlerConnector.getHtml());
+            Optional<String> newHtml = getLastColorsHtml(connector.getHtml());
             while (!newHtml.isPresent() || html.equals(newHtml.get()) ) {
-                newHtml = getLastColorsHtml(handlerConnector.getHtml());
+                newHtml = getLastColorsHtml(connector.getHtml());
                 TimeUnit.SECONDS.sleep(1);
             }
             return newHtml;
