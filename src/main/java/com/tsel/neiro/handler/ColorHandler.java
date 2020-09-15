@@ -1,23 +1,23 @@
 package com.tsel.neiro.handler;
 
-import static com.tsel.neiro.utils.HandlerUtils.getColorName;
-import static java.util.Optional.ofNullable;
-import static org.apache.logging.log4j.util.Strings.isBlank;
-
 import com.tsel.neiro.data.Result;
 import com.tsel.neiro.exception.HandleColorException;
 import com.tsel.neiro.repository.ResultRepository;
+import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import lombok.SneakyThrows;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+
+import static com.tsel.neiro.utils.HandlerUtils.getColorName;
+import static java.util.Optional.ofNullable;
+import static org.apache.logging.log4j.util.Strings.isBlank;
 
 @Log4j2
 @Component
@@ -33,7 +33,6 @@ public class ColorHandler extends Thread {
 
     private String html;
     private List<Integer> lastColors;
-    private boolean isInterrupt;
 
     public ColorHandler(@Autowired HandlerSettings settings, @Autowired ResultRepository repository,
                         @Autowired Connector connector) {
@@ -45,8 +44,7 @@ public class ColorHandler extends Thread {
     @Override
     @SneakyThrows
     public void run() {
-        isInterrupt = false;
-        while (!isInterrupt) {
+        while (!this.isInterrupted()) {
             try {
                 Optional<String> newHtml = updateHtml();
                 if (newHtml.isPresent()) {
@@ -69,10 +67,9 @@ public class ColorHandler extends Thread {
         }
     }
 
-    @Override
-    public void interrupt() {
-        this.isInterrupt = true;
-        super.interrupt();
+    @PreDestroy
+    private void destroy() {
+        this.interrupt();
     }
 
     private Optional<String> updateHtml() throws InterruptedException, HandleColorException {

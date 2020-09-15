@@ -1,6 +1,5 @@
 package com.tsel.neiro.handler;
 
-import com.tsel.neiro.handler.HandlerSettings;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
