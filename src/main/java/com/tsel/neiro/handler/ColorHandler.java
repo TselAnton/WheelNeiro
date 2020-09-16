@@ -1,24 +1,25 @@
 package com.tsel.neiro.handler;
 
-import com.tsel.neiro.data.Result;
-import com.tsel.neiro.exception.HandleColorException;
-import com.tsel.neiro.repository.ResultRepository;
-import lombok.SneakyThrows;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PreDestroy;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-
 import static com.tsel.neiro.utils.HandlerUtils.getColorName;
 import static java.util.Optional.ofNullable;
 import static org.apache.logging.log4j.util.Strings.isBlank;
 
+import com.tsel.neiro.data.Result;
+import com.tsel.neiro.exception.HandleColorException;
+import com.tsel.neiro.repository.ResultRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.PreDestroy;
+import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+@Lazy
 @Log4j2
 @Component
 @Scope("singleton")
@@ -68,7 +69,7 @@ public class ColorHandler extends Thread {
     }
 
     @PreDestroy
-    private void destroy() {
+    private void destroyBean() {
         this.interrupt();
     }
 

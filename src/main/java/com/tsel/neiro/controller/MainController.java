@@ -1,6 +1,6 @@
 package com.tsel.neiro.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
+import javax.ws.rs.GET;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/")
 public class MainController {
 
-    @GetMapping("/")
+    //TODO: Настроить вывод view
+
+    @GET
     public String getMainPage() {
         return "Main page";
     }

@@ -1,7 +1,10 @@
 databaseChangeLog:
   - logicalFilePath: db/changelog/changelog-master.yaml
   - changeSet:
-      id: 1
+      preConditions:
+        onFail: HALT
+        not.tableExists.tableName: results
+      id: 2
       author: anton_tsel
       changes:
         - createTable:
@@ -26,3 +29,5 @@ databaseChangeLog:
                   constraints:
                     unique: false
                     nullable: false
+      rollback:
+        dropTable.tableName: results
