@@ -1,4 +1,4 @@
-package com.tsel.neiro.exception;
+package com.tsel.neuro.exception;
 
 public class HandleColorException extends Exception {
 

@@ -1,6 +1,6 @@
-package com.tsel.neiro.repository;
+package com.tsel.neuro.repository;
 
-import com.tsel.neiro.data.Result;
+import com.tsel.neuro.data.Result;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

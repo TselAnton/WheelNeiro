@@ -1,4 +1,4 @@
-package com.tsel.neiro.exception;
+package com.tsel.neuro.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

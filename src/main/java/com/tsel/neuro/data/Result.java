@@ -1,6 +1,6 @@
-package com.tsel.neiro.data;
+package com.tsel.neuro.data;
 
-import static com.tsel.neiro.utils.TimeUtils.getCurrentTimeInLong;
+import static com.tsel.neuro.utils.TimeUtils.getCurrentTimeInLong;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

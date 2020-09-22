@@ -1,10 +1,10 @@
-package com.tsel.neiro.service;
+package com.tsel.neuro.service;
 
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
 
-import com.tsel.neiro.data.Result;
+import com.tsel.neuro.data.Result;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;

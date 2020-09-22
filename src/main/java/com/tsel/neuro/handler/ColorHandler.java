@@ -1,12 +1,12 @@
-package com.tsel.neiro.handler;
+package com.tsel.neuro.handler;
 
-import static com.tsel.neiro.utils.HandlerUtils.getColorName;
+import static com.tsel.neuro.utils.HandlerUtils.getColorName;
 import static java.util.Optional.ofNullable;
 import static org.apache.logging.log4j.util.Strings.isBlank;
 
-import com.tsel.neiro.data.Result;
-import com.tsel.neiro.exception.HandleColorException;
-import com.tsel.neiro.repository.ResultRepository;
+import com.tsel.neuro.data.Result;
+import com.tsel.neuro.exception.HandleColorException;
+import com.tsel.neuro.repository.ResultRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.tsel.neiro.controller;
+package com.tsel.neuro.controller;
 
 import javax.ws.rs.GET;
 import org.springframework.web.bind.annotation.RequestMapping;

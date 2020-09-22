@@ -1,4 +1,4 @@
-package com.tsel.neiro.utils;
+package com.tsel.neuro.utils;
 
 public final class HandlerUtils {
 

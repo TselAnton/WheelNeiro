@@ -1,4 +1,4 @@
-package com.tsel.neiro.utils;
+package com.tsel.neuro.utils;
 
 import static java.time.Instant.ofEpochMilli;
 import static java.util.Optional.ofNullable;

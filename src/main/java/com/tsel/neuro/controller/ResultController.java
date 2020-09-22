@@ -1,8 +1,8 @@
-package com.tsel.neiro.controller;
+package com.tsel.neuro.controller;
 
-import com.tsel.neiro.data.Result;
-import com.tsel.neiro.exception.NotFoundEntityException;
-import com.tsel.neiro.service.ResultService;
+import com.tsel.neuro.data.Result;
+import com.tsel.neuro.exception.NotFoundEntityException;
+import com.tsel.neuro.service.ResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

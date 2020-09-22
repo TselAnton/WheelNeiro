@@ -1,4 +1,4 @@
-package com.tsel.neiro.handler;
+package com.tsel.neuro.handler;
 
 import static java.lang.String.format;
 
