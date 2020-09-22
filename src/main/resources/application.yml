@@ -18,6 +18,12 @@ spring:
 server:
   port: 8080
 
+perceptron:
+  learningRate: 0.1
+  moment: 0.2
+  epochNumber: 500
+  hiddenLayers: 3
+
 handler:
   webSite: https://csgo500.io/
   pointCount: 20
