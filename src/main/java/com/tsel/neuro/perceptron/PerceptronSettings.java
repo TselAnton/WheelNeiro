@@ -13,5 +13,5 @@ public class PerceptronSettings {
     private Double learningRate;
     private Double moment;
     private Integer epochNumber;
-    private Integer hiddenLayers;
+    private String hiddenLayers;
 }

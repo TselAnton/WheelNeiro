@@ -1,0 +1,25 @@
+body {
+    /*background: #26262c;*/
+    /*color: white;*/
+}
+
+h2 {
+    font-size: 35px;
+}
+
+table {
+    border-spacing: 10px 0;
+    /*background: #26262c;*/
+    height: 25px;
+
+}
+
+td {
+    padding: 25px;
+    border: 1px solid black;
+}
+
+td.blackColor { background: #404040; }
+td.redColor { background: #d61834; }
+td.blueColor { background: #45B5DA; }
+td.goldColor { background: #FFC870; }
