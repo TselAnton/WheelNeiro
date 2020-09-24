@@ -19,4 +19,19 @@ public final class HandlerUtils {
                 return null;
         }
     }
+
+    public static Double getNormalizeNum(Integer val) {
+        switch (val) {
+            case 0:
+                return 0.25;
+            case 1:
+                return 0.50;
+            case 2:
+                return 0.75;
+            case 3:
+                return 1.0;
+            default:
+                return 0.0;
+        }
+    }
 }

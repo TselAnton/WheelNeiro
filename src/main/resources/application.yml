@@ -25,7 +25,6 @@ perceptron:
   hiddenLayers: 3
   inputsCount: 20
   testFilePath: test_data.arff
-  updatePercentage: 0.1
   hoursForUpdate: 6
 
 handler:
