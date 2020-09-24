@@ -14,4 +14,6 @@ public class PerceptronSettings {
     private String hiddenLayers;
     private Integer inputsCount;
     private String testFilePath;
+    private Double updatePercentage;
+    private Integer hoursForUpdate;
 }
