@@ -1,6 +1,8 @@
 package com.tsel.neuro.perceptron;
 
+import static java.lang.Math.abs;
 import static java.lang.String.format;
+import static java.util.Collections.emptyList;
 
 import com.tsel.neuro.data.Result;
 import com.tsel.neuro.repository.ResultRepository;
@@ -9,6 +11,7 @@ import com.tsel.neuro.utils.HandlerUtils;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +22,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class PerceptronTrainer implements Runnable {
 
-    private static final String RELATION = "@RELATION wheel\n";
+    private static final String RELATION = "@RELATION testData\n";
     private static final String DATA = "@DATA";
     private static final String ATTRIBUTE_PATTERN = "@ATTRIBUTE x%d NUMERIC";
-    private static final String RESULT_ATTRIBUTE = "@ATTRIBUTE result";
+    private static final String RESULT_ATTRIBUTE = "@ATTRIBUTE result NUMERIC";
 
     private final ResultService resultService;
     private final ResultRepository resultRepository;
@@ -50,34 +53,49 @@ public class PerceptronTrainer implements Runnable {
     }
 
     protected void createDataFile() {
-        if (resultRepository.count() < (settings.getInputsCount() + 1) * 2) {
+        Result lastResult = null;
+        List<Result> resultSet = resultService.getResultSet(settings.getInputsCount() + 1);
+        if (!isValidDataSetSize(resultSet)) {
+            log.warn("Not enough data for create data set file");
             Thread.currentThread().interrupt();
         }
 
-        Result lastResult = null;
-        List<Result> resultSet = resultService.getResultSet(settings.getInputsCount() + 1);
-
-        do {
-            try (PrintWriter writer = new PrintWriter(settings.getTestFilePath(), "UTF-8")){
+        try (PrintWriter writer = new PrintWriter(Paths.get(settings.getTestFilePath()).toString(), "UTF-8")) {
+            do {
                 if (lastResult == null) {
                     printFileHeader(writer);
                 }
+                if (lastResult == null || isValidDataSet(resultSet)) {
+                    writer.println(resultSet.stream()
+                            .map(Result::getValue)
+                            .map(HandlerUtils::getNormalizeNum)
+                            .map(String::valueOf)
+                            .collect(Collectors.joining(","))
+                    );
+                }
 
                 lastResult = resultSet.get(1);
-                writer.println(resultSet.stream()
-                    .map(Result::getValue)
-                    .map(HandlerUtils::getNormalizeNum)
-                    .map(String::valueOf)
-                    .collect(Collectors.joining(","))
-                );
-
                 resultSet = resultService.getResultSet(settings.getInputsCount() + 1, lastResult.getDate());
+            } while (isValidDataSetSize(resultSet));
 
-            } catch (FileNotFoundException | UnsupportedEncodingException e) {
-                log.error("Exception while create data set file", e);
-                Thread.currentThread().interrupt();
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+            log.error("Exception while create data set file", e);
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private boolean isValidDataSetSize(List<Result> dataSet) {
+        return dataSet.size() >= settings.getInputsCount() + 1;
+    }
+
+    private boolean isValidDataSet(List<Result> dataSet) {
+        for (int i = 0; i < dataSet.size() - 1; i++) {
+            if (abs(dataSet.get(i + 1).getDate() - dataSet.get(i).getDate()) > 1000) {
+                return false;
             }
-        } while (resultSet.size() == settings.getInputsCount());
+        }
+
+        return true;
     }
 
     private void printFileHeader(PrintWriter writer) {

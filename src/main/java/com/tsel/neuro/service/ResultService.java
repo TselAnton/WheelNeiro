@@ -35,4 +35,10 @@ public class ResultService {
             .stream()
             .findFirst();
     }
+
+    public List<Result> getLastDataSet(int limit) {
+        return entityManager.createQuery("SELECT r FROM Result r ORDER BY r.date DESC", Result.class)
+                .setMaxResults(limit)
+                .getResultList();
+    }
 }

@@ -19,6 +19,10 @@ public class PerceptronWorker extends Thread {
 
     private LocalDateTime lastLearnUpdate;
 
+    private long countOfElements;
+    private long successElements;
+    private Result lastResult;
+
     public PerceptronWorker(@Autowired ResultRepository resultRepository,
                             @Autowired Perceptron perceptron,
                             @Autowired PerceptronTrainer perceptronTrainer,

@@ -28,4 +28,9 @@ public class Result {
         this.date = getCurrentTimeInLong();
         this.value = value;
     }
+
+    public Result(Integer value, Long date) {
+        this.date = date;
+        this.value = value;
+    }
 }

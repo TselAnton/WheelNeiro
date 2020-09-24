@@ -22,7 +22,7 @@ perceptron:
   learningRate: 0.1
   moment: 0.2
   epochNumber: 500
-  hiddenLayers: 3
+  hiddenLayers: 18,18
   inputsCount: 20
   testFilePath: test_data.arff
   hoursForUpdate: 6
