@@ -1,8 +1,9 @@
 package com.tsel.neuro.utils;
 
-public final class HandlerUtils {
+import lombok.experimental.UtilityClass;
 
-    private HandlerUtils() {}
+@UtilityClass
+public final class HandlerUtils {
 
     public static String getColorName(Integer val) {
         switch (val) {

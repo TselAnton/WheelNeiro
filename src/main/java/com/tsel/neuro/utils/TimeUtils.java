@@ -5,10 +5,10 @@ import static java.util.Optional.ofNullable;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public final class TimeUtils {
-
-    private TimeUtils() {}
 
     public static long getCurrentTimeInLong() {
         return LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();

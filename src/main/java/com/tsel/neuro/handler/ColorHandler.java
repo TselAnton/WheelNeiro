@@ -16,13 +16,11 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Lazy
 @Log4j2
 @Component
-@Scope("singleton")
 public class ColorHandler extends Thread {
 
     private static final Integer BLOCK_OF_COLOR = 450;
@@ -40,6 +38,7 @@ public class ColorHandler extends Thread {
         this.settings = settings;
         this.repository = repository;
         this.connector = connector;
+        this.setName("Color Handler");
     }
 
     @Override

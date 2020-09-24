@@ -23,6 +23,8 @@ perceptron:
   moment: 0.2
   epochNumber: 500
   hiddenLayers: 3
+  inputsCount: 20
+  testFilePath: test_data.arff
 
 handler:
   webSite: https://csgo500.io/
