@@ -39,7 +39,7 @@ public class PerceptronWorker extends Thread {
 
     public void handleEvent(Result lastColor) {
         if (isNeededRelearn()) {
-
+            Thread
         }
     }
 
