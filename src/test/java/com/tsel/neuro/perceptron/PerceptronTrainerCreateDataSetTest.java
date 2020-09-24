@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.tsel.neuro.utils.TimeUtils.getCurrentTimeInLong;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -77,6 +76,9 @@ public class PerceptronTrainerCreateDataSetTest {
 
         assertEquals(allLines.get(0), "@RELATION testData");
         assertEquals(allLines.get(2), "@ATTRIBUTE x1 NUMERIC");
+        assertEquals(allLines.get(3), "@ATTRIBUTE x2 NUMERIC");
+        assertEquals(allLines.get(4), "@ATTRIBUTE x3 NUMERIC");
+        assertEquals(allLines.get(5), "@ATTRIBUTE x4 NUMERIC");
         assertEquals(allLines.get(6), "@ATTRIBUTE x5 NUMERIC");
         assertEquals(allLines.get(7), "@ATTRIBUTE result NUMERIC");
         assertEquals(allLines.get(9), "@DATA");
