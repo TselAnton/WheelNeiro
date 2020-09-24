@@ -16,7 +16,7 @@ public class NeuroWheelApplication {
         ConfigurableApplicationContext context = SpringApplication.run(NeuroWheelApplication.class, args);
 
         // Run handler
-//        ColorHandler handler = context.getBean(ColorHandler.class);
-//        handler.start();
+        ColorHandler handler = context.getBean(ColorHandler.class);
+        handler.start();
     }
 }

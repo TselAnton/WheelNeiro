@@ -8,9 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static com.tsel.neuro.utils.HandlerUtils.getColorName;
+
 @Slf4j
 @Component
-public class PerceptronWorker extends Thread {
+public class PerceptronWorker {
 
     private final ResultRepository resultRepository;
     private final Perceptron perceptron;
@@ -18,7 +20,6 @@ public class PerceptronWorker extends Thread {
     private final PerceptronSettings perceptronSettings;
 
     private LocalDateTime lastLearnUpdate;
-
     private long countOfElements;
     private long successElements;
     private Result lastResult;
@@ -32,25 +33,35 @@ public class PerceptronWorker extends Thread {
         this.perceptronTrainer = perceptronTrainer;
         this.perceptronSettings = perceptronSettings;
         this.lastLearnUpdate = null;
-        this.setName("Perceptron Worker");
     }
 
-    @Override
-    public void run() {
-
+    /**
+     * Get the percentage of successful predictions
+     * @return percentage of successful predictions
+     */
+    public double getSuccessStat() {
+        return 100.0 * ((double)successElements / (double)countOfElements);
     }
 
-    public void handleEvent(Result lastColor) {
+    /**
+     * Get result.
+     * If it is necessary to retrain the perceptron,
+     * this creates a new stream to create a new data file and retrain the neural network
+     * @param result Last result
+     */
+    public void handleEvent(Result result) {
+        log.info("Current color: {}", getColorName(result.getValue()));
+        countOfElements += 1;
+
+        //TODO: Ещё подумать над этим моментом
+//        if (result.equals(lastResult)) successElements++;
+//        lastResult = result;
+
         if (isNeededRelearn()) {
+            lastLearnUpdate = LocalDateTime.now();
             Thread updateThread = new Thread(perceptronTrainer);
-            updateThread.setName("Perceptron Trainer");
+            updateThread.setName("Perceptron Trainer ");
             updateThread.start();
-
-            try {
-                updateThread.join();
-            } catch (InterruptedException e) {
-                log.error("Something went wrong while train perceptron", e);
-            }
         }
     }
 

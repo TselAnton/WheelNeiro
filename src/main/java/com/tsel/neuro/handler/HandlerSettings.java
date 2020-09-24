@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "handler")
 public class HandlerSettings {
+
     private String webSite;
     private Integer pointCount;
     private String connectorName;

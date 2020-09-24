@@ -1,22 +1,21 @@
 package com.tsel.neuro.perceptron;
 
-import static java.lang.Math.abs;
-import static java.lang.String.format;
-import static java.util.Collections.emptyList;
-
 import com.tsel.neuro.data.Result;
-import com.tsel.neuro.repository.ResultRepository;
 import com.tsel.neuro.service.ResultService;
 import com.tsel.neuro.utils.HandlerUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+
+import static java.lang.Math.abs;
+import static java.lang.String.format;
 
 @Slf4j
 @Component
@@ -26,18 +25,16 @@ public class PerceptronTrainer implements Runnable {
     private static final String DATA = "@DATA";
     private static final String ATTRIBUTE_PATTERN = "@ATTRIBUTE x%d NUMERIC";
     private static final String RESULT_ATTRIBUTE = "@ATTRIBUTE result NUMERIC";
+    private static final Integer TIME_DIFF = 35000;
 
     private final ResultService resultService;
-    private final ResultRepository resultRepository;
     private final PerceptronSettings settings;
     private final Perceptron perceptron;
 
     public PerceptronTrainer(@Autowired ResultService resultService,
-                             @Autowired ResultRepository resultRepository,
                              @Autowired PerceptronSettings settings,
                              @Autowired Perceptron perceptron) {
         this.resultService = resultService;
-        this.resultRepository = resultRepository;
         this.settings = settings;
         this.perceptron = perceptron;
     }
@@ -52,7 +49,10 @@ public class PerceptronTrainer implements Runnable {
 
     }
 
-    protected void createDataFile() {
+    /**
+     * Create new data file with all data in DB
+     */
+    public void createDataFile() {
         Result lastResult = null;
         List<Result> resultSet = resultService.getResultSet(settings.getInputsCount() + 1);
         if (!isValidDataSetSize(resultSet)) {
@@ -76,7 +76,7 @@ public class PerceptronTrainer implements Runnable {
 
                 lastResult = resultSet.get(1);
                 resultSet = resultService.getResultSet(settings.getInputsCount() + 1, lastResult.getDate());
-            } while (isValidDataSetSize(resultSet));
+            } while (resultSet.size() > settings.getInputsCount());
 
         } catch (FileNotFoundException | UnsupportedEncodingException e) {
             log.error("Exception while create data set file", e);
@@ -90,11 +90,10 @@ public class PerceptronTrainer implements Runnable {
 
     private boolean isValidDataSet(List<Result> dataSet) {
         for (int i = 0; i < dataSet.size() - 1; i++) {
-            if (abs(dataSet.get(i + 1).getDate() - dataSet.get(i).getDate()) > 1000) {
+            if (abs(dataSet.get(i + 1).getDate() - dataSet.get(i).getDate()) > TIME_DIFF) {
                 return false;
             }
         }
-
         return true;
     }
 

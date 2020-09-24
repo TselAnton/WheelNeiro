@@ -1,22 +1,23 @@
 package com.tsel.neuro.handler;
 
-import static com.tsel.neuro.utils.HandlerUtils.getColorName;
-import static java.util.Optional.ofNullable;
-import static org.apache.logging.log4j.util.Strings.isBlank;
-
 import com.tsel.neuro.data.Result;
 import com.tsel.neuro.exception.HandleColorException;
+import com.tsel.neuro.perceptron.PerceptronWorker;
 import com.tsel.neuro.repository.ResultRepository;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import javax.annotation.PreDestroy;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PreDestroy;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+
+import static java.util.Optional.ofNullable;
+import static org.apache.logging.log4j.util.Strings.isBlank;
 
 @Lazy
 @Log4j2
@@ -26,6 +27,7 @@ public class ColorHandler extends Thread {
     private static final Integer BLOCK_OF_COLOR = 450;
     private static final Integer PAST_BLOCK = 34;
 
+    private final PerceptronWorker perceptronWorker;
     private final ResultRepository repository;
     private final HandlerSettings settings;
     private final Connector connector;
@@ -34,10 +36,11 @@ public class ColorHandler extends Thread {
     private List<Integer> lastColors;
 
     public ColorHandler(@Autowired HandlerSettings settings, @Autowired ResultRepository repository,
-                        @Autowired Connector connector) {
+                        @Autowired Connector connector, @Autowired PerceptronWorker perceptronWorker) {
         this.settings = settings;
         this.repository = repository;
         this.connector = connector;
+        this.perceptronWorker = perceptronWorker;
         this.setName("Color Handler");
     }
 
@@ -52,8 +55,8 @@ public class ColorHandler extends Thread {
                     Integer newColor = getCurrentColor();
 
                     if (newColor != null) {
-                        log.info("Current color: {}", getColorName(newColor));
-                        repository.save(new Result(newColor));
+                        Result newResult = repository.save(new Result(newColor));
+                        perceptronWorker.handleEvent(newResult);
                     }
 
                     connector.refreshPage();
